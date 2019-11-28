@@ -238,7 +238,7 @@ type Client struct {
 
 	// tokensClient is Nomad Client's custom Consul client for requesting Consul
 	// Service Identity tokens through Nomad Server.
-	tokensClient consulApi.ConsulTokenAPI
+	tokensClient consulApi.ServiceIdentityAPI
 
 	// vaultClient is used to interact with Vault for token and secret renewals
 	vaultClient vaultclient.VaultClient
@@ -1050,7 +1050,7 @@ func (c *Client) restoreState() error {
 			StateUpdater:        c,
 			DeviceStatsReporter: c,
 			Consul:              c.consulService,
-			ConsulTokens:        c.tokensClient, // todo(shoenig), keep plumbing!
+			ConsulSI:            c.tokensClient, // todo(shoenig), keep plumbing!
 			Vault:               c.vaultClient,
 			PrevAllocWatcher:    prevAllocWatcher,
 			PrevAllocMigrator:   prevAllocMigrator,
@@ -2300,7 +2300,7 @@ func (c *Client) addAlloc(alloc *structs.Allocation, migrateToken string) error 
 		ClientConfig:        c.configCopy,
 		StateDB:             c.stateDB,
 		Consul:              c.consulService,
-		ConsulTokens:        c.tokensClient, // todo(shoenig), keep plumbing!
+		ConsulSI:            c.tokensClient, // todo(shoenig), keep plumbing!
 		Vault:               c.vaultClient,
 		StateUpdater:        c,
 		DeviceStatsReporter: c,
@@ -2326,7 +2326,7 @@ func (c *Client) addAlloc(alloc *structs.Allocation, migrateToken string) error 
 // setupConsulTokenClient configures a tokenClient for managing consul service
 // identity tokens.
 func (c *Client) setupConsulTokenClient() error {
-	tc := consulApi.NewTokensClient(c.logger, c.deriveSIToken)
+	tc := consulApi.NewIdentitiesClient(c.logger, c.deriveSIToken)
 	c.tokensClient = tc
 	return nil
 }

@@ -60,7 +60,7 @@ func testAllocRunnerConfig(t *testing.T, alloc *structs.Allocation) (*Config, fu
 		ClientConfig:       clientConf,
 		StateDB:            state.NoopDB{},
 		Consul:             consul.NewMockConsulServiceClient(t, clientConf.Logger),
-		ConsulTokens:       consul.NewMockTokensClient(),
+		ConsulSI:           consul.NewMockServiceIdentitiesClient(),
 		Vault:              vaultclient.NewMockVaultClient(),
 		StateUpdater:       &MockStateUpdater{},
 		PrevAllocWatcher:   allocwatcher.NoopPrevAlloc{},

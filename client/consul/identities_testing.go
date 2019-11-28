@@ -1,15 +1,16 @@
 package consul
 
 import (
+	"fmt"
 	"sync"
 
 	"github.com/hashicorp/nomad/helper/uuid"
 	"github.com/hashicorp/nomad/nomad/structs"
 )
 
-// MockTokensClient is used for testing the client for managing consul service
+// MockServiceIdentitiesClient is used for testing the client for managing consul service
 // identity tokens.
-type MockTokensClient struct {
+type MockServiceIdentitiesClient struct {
 	// deriveTokenErrors maps an allocation ID and tasks to an error when the
 	// token is derived
 	deriveTokenErrors map[string]map[string]error
@@ -23,18 +24,20 @@ type MockTokensClient struct {
 	lock sync.Mutex
 }
 
-var _ ConsulTokenAPI = (*MockTokensClient)(nil)
+var _ ServiceIdentityAPI = (*MockServiceIdentitiesClient)(nil)
 
-// NewMockTokensClient returns a MockTokensClient for testing.
-func NewMockTokensClient() *MockTokensClient {
-	return &MockTokensClient{
+// NewMockServiceIdentitiesClient returns a MockServiceIdentitiesClient for testing.
+func NewMockServiceIdentitiesClient() *MockServiceIdentitiesClient {
+	return &MockServiceIdentitiesClient{
 		deriveTokenErrors: make(map[string]map[string]error),
 	}
 }
 
-func (mtc *MockTokensClient) DeriveSITokens(alloc *structs.Allocation, tasks []string) (map[string]string, error) {
+func (mtc *MockServiceIdentitiesClient) DeriveSITokens(alloc *structs.Allocation, tasks []string) (map[string]string, error) {
 	mtc.lock.Lock()
 	defer mtc.lock.Unlock()
+
+	fmt.Println("MockServiceIdentitiesClient.DeriveSITokens running!")
 
 	// if the DeriveTokenFn is explicitly set, use that
 	if mtc.DeriveTokenFn != nil {
@@ -55,7 +58,7 @@ func (mtc *MockTokensClient) DeriveSITokens(alloc *structs.Allocation, tasks []s
 	return tokens, nil
 }
 
-func (mtc *MockTokensClient) SetDeriveTokenError(allocID string, tasks []string, err error) {
+func (mtc *MockServiceIdentitiesClient) SetDeriveTokenError(allocID string, tasks []string, err error) {
 	mtc.lock.Lock()
 	defer mtc.lock.Unlock()
 
@@ -68,7 +71,7 @@ func (mtc *MockTokensClient) SetDeriveTokenError(allocID string, tasks []string,
 	}
 }
 
-func (mtc *MockTokensClient) DeriveTokenErrors() map[string]map[string]error {
+func (mtc *MockServiceIdentitiesClient) DeriveTokenErrors() map[string]map[string]error {
 	mtc.lock.Lock()
 	defer mtc.lock.Unlock()
 
