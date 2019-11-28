@@ -1038,14 +1038,6 @@ func (c *ServiceClient) UpdateTTL(id, output, status string) error {
 	return c.client.UpdateTTL(id, output, status)
 }
 
-// DeriveSITokens requests from nomad server a new Consul Service Identity Token
-// for each task in taskNames. The return value is a map from task name to token
-// (accessor?). //todo: probably needs the whole token
-func (c *ServiceClient) DeriveSITokens(alloc *structs.Allocation, taskNames []string) (map[string]string, error) {
-
-	return nil, nil
-}
-
 // Shutdown the Consul client. Update running task registrations and deregister
 // agent from Consul. On first call blocks up to shutdownWait before giving up
 // on syncing operations.

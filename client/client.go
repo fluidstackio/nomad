@@ -2326,10 +2326,8 @@ func (c *Client) addAlloc(alloc *structs.Allocation, migrateToken string) error 
 // setupConsulTokenClient configures a tokenClient for managing consul service
 // identity tokens.
 func (c *Client) setupConsulTokenClient() error {
-
 	tc := consulApi.NewTokensClient(c.logger, c.deriveSIToken)
 	c.tokensClient = tc
-
 	return nil
 }
 
