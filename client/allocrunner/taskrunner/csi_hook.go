@@ -90,7 +90,10 @@ func (h *csiHook) Prestart(
 	fmt.Printf("##   recovered token: %s\n", token)
 
 	if token == "" {
-		// we need to derive a token
+		if token, err = h.deriveSIToken(ctx); err != nil {
+			return err
+		}
+		fmt.Printf("##  derived token: %s\n", token)
 	}
 
 	return nil
@@ -130,11 +133,22 @@ func (h *csiHook) deriveSIToken(ctx context.Context) (string, error) {
 	// keep trying to get the token in the background
 	go func(ch chan<- string) {
 		for {
+
+			// quit trying if the hook context is done
+			select {
+			case <-ctx.Done():
+				return
+			default:
+			}
+
 			tokens, err := h.siClient.DeriveSITokens(h.alloc, []string{h.taskName})
 			if err != nil {
 				// log an error?
-				continue // backoff
+				// todo: backoff
+				time.Sleep(1 * time.Second)
+				continue
 			}
+
 			ch <- tokens[h.taskName]
 			return
 		}
