@@ -1086,7 +1086,7 @@ func TestTaskRunner_CheckWatcher_Restart(t *testing.T) {
 	require.True(t, state.Failed, pretty.Sprint(state))
 }
 
-func TestTaskRunner_BlockForCSI(t *testing.T) {
+func TestTaskRunner_BlockForSIDS(t *testing.T) {
 	t.Parallel()
 
 	// setup a connect enabled batch job that wants to exit immediately, which
